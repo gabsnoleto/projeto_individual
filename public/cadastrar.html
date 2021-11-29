@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>quiz league</title>
+</head>
+<body>
+    <div id="tela1" style="display: none;">
+        <div id="bloco1">
+            <button id="botao_comecar" onclick="fun_sortear()">começar</button><br>
+            <div id="impressao1"></div>
+            <div id="impressao2"></div>
+            <div id="impressao3"></div>
+            <div id="impressao4"></div>
+        </div>
+        <div id="bloco2">
+            <input id="entrada">
+            <button onclick="checar()">checar</button>
+            
+        </div>
+
+    </div>
+    <div id="tela2" style="display: block;">
+        <div id="cadastro" style="display: block;">
+            <fieldset>
+            <h4>usuario: <input type="text" id="iptUsuario" required></h4>
+            <h4>email: <input type="text" id="iptEmail" required></h4>
+            <h4>senha: <input type="text" id="iptSenha" required></h4>
+            <h4>confirmar senha: <input type="text" id="iptConfirmar" required></h4>
+            </fieldset>
+            <fieldset>
+                <button onclick="fun_cadastro()">Cadastrar</button>
+            </fieldset>
+        </div>
+
+    </div>
+</body>
+
+<script>
+    function fun_cadastro(){
+        let usuarioVar = iptUsuario.value;
+        let emailVar = iptEmail.value;
+        let senhaVar = iptSenha.value;
+        let confirmarVar = iptConfirmar.value;
+
+        if(usuarioVar == "" && emailVar == "" && senhaVar == "" && confirmarVar == ""){
+            alert("Preencha todos os campos");
+            if(usuarioVar == "" || usuarioVar == null ){
+				alert("em branco usuario");
+				event.prefentDefault();
+				return false;
+            }
+            if(emailVar == ""){
+				alert("em branco email");
+				event.prefentDefault();
+				return false;
+            }
+            if(senhaVar == ""){
+				alert("em branco senha");
+				event.prefentDefault();
+				return false
+            }
+            if(confirmarvar == ""){
+				alert("em branco confirmar")
+				event.prefentDefault();
+				return false;
+            }
+			event.prefentDefault()
+			return false;
+        }
+        else if(emailVar.indexOf("@") == -1 || emailVar.indexOf(".com") == -1){
+            alert("Email inválido.");
+			event.prefentDefault()
+			return false
+        }
+        else if(senhaVar != confirmarVar){
+            alert("Campo Senha e Confirmar senha devem precisam ser iguais.")
+			event.prefentDefault()
+        }
+
+        fetch("/usuarios/cadastrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                usuarioServer: usuarioVar,
+                emailServer: emailVar,
+                senhaServer: senhaVar
+            })
+        }).then(function (resposta) {
+
+            console.log("resposta: ", resposta);
+
+            if (resposta.ok) {
+                window.alert("Cadastro realizado com sucesso!");
+                window.location = "login.html";
+                limparFormulario();
+                finalizarAguardar();
+            } else {
+                throw ("Houve um erro ao tentar realizar o cadastro!");
+            }
+        }).catch(function (resposta) {
+            console.log(`#ERRO: ${resposta}`);
+            finalizarAguardar();
+        });
+
+        return false;
+
+    }
+
+    
+</script>
+</html>

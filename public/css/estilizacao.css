@@ -1,0 +1,33 @@
+body{
+   margin: 0;
+   padding: 0;
+   justify-content: center;
+   display: flex;
+}
+
+.container{
+   display: flex;
+   width: 80%;
+   align-items: center;
+   justify-content: center;
+}
+
+.bloco1{
+   background-color: brown;
+   width: 33%;
+   height: 100vh;
+}
+.bloco2{
+   background-color: cadetblue;
+   height: 100vh;
+   width: 33%;
+}
+.bloco3{
+   background-color: tomato;
+   height: 100vh;
+   width: 33%;
+}
+
+div{
+   font-size: 25px;
+}

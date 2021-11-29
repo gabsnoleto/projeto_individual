@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="./funções/arrays.js"></script>
+    <link rel="stylesheet" href="./css/estilizacao.css">
+    <title>Quem é o campeão?</title>
+</head>
+<body onload="fun_sortear(), classificar()">
+
+
+    <div class="container" >
+        <div class="bloco1">
+            
+            <div id="impressao2"></div>
+            <h1>Usuario</h1>
+            <div id="impressao3"></div>
+            <h1>Pontos</h1>
+            <div id="impressao4"></div>
+            <br>
+            <h1>Classificação</h1>
+            <div id="impressao5"></div>
+        </div>
+        <div class="bloco2" >
+
+            <div id="impressao1"></div>
+
+            <input id="entrada"  onchange="checar()">
+            
+            <br><br><br><br>
+            <h3>corretas</h3>
+            <div id="imagem"></div>
+            <h3>erradas</h3>
+            <a href=""></a>
+            <div id="imagem2"></div>
+            
+        </div>
+
+        <bloco class="bloco3">
+            <button  >checar</button>
+            <button id="submit_button" onclick="submeter()" style="display: none;">submeter</button>
+        </bloco>
+        
+    </div>
+
+
+</body>
+<script>
+
+         
+    var teste = palavras.sort((a,b) => 0.5 - Math.random())
+    var cont =1;
+    function fun_sortear(){
+        
+        
+        impressao1.innerHTML = `${cont}- ${teste[cont].frase}`;
+        
+        //impressao3.innerHTML = teste[cont].dica;
+    }
+    var pontos = 0;
+    function checar(){
+        
+        let valor_entrada = (entrada.value).toLowerCase();
+        if(cont < 10){
+            if(palavras[cont].resposta == valor_entrada){
+                imagem.innerHTML += `<a href="https://www.w3schools.com" target="_blank"><img style="height:150px"  src="${teste[cont].imagem}" alt=""></a>`;
+                alert("Correto!")
+                cont ++;
+                fun_sortear();
+                pontos+=1;
+                
+            }else{
+                imagem2.innerHTML += `<img style="height:150px"  src="${teste[cont].imagem}" alt="">`;
+                alert("errado!")
+                cont ++;
+                fun_sortear();
+
+            }
+            entrada.value = "";
+        }else{
+            imagem.innerHTML += `<img style="height:150px"  src="${teste[cont].imagem}" alt="">`;
+            submit_button.style.display = "block";
+            pontos+=1;
+            
+            
+            alert("Você terminou;")
+            
+        }
+        impressao4.innerHTML = `Pontos: ${pontos}`;
+        console.log(cont)
+    }
+
+    function submeter(){
+        let idVar = sessionStorage.ID_USUARIO;
+        let pontosVar = pontos;
+
+        if(!idVar){
+            alert("Seu usuario está inválido" + idVar)
+            window.location = "login.html"
+        }
+
+        if(pontosVar == "" || pontosVar == 0){
+            alert(`Pontos não pode ser: ${pontosVar}`)
+            console.log(`${pontosVar}`)
+
+        }
+        
+        fetch("/usuarios/registrar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                idServer: idVar,
+                pontosServer: pontosVar
+            })
+        }).then((resposta) =>{
+            console.log("estou no then do submeter")
+
+            if(resposta.ok){
+                console.log(resposta);
+                
+                resposta.json().then(json =>{
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+                    window.location ="jogar.html"
+                    
+                    submit_button.style.display = "none";
+
+                    
+                })
+            }else{
+                alert("Não inserido no banco")
+            }
+        })
+    }
+
+    function classificar() {
+        impressao5.innerHTML = "";
+        
+        fetch("/usuarios/classificar").then(function (resposta) {
+            if (resposta.ok) {
+                if (resposta.status == 204) {
+                    throw "Nenhum resultado encontrado!!";
+                }
+
+                resposta.json().then(function (resposta) {
+                    console.log("Dados recebidos: ", JSON.stringify(resposta));
+                    let p = 1;
+                    for(let i = 0; i < resposta.length; i++, p++){
+                        var dados = resposta[i]
+                        impressao5.innerHTML += `Colocação ${p} Usuario: ${dados.usuario} Pontos: ${dados.pontos} Data: ${dados.data}<br>`;
+                        impressao3.innerHTML = sessionStorage.NICK_USUARIO;
+                    }
+                    
+                });
+            } else {
+                throw ('Houve um erro na API!');
+            }
+        }).catch(function (resposta) {
+            console.error(resposta);
+
+        });
+    }
+
+
+</script>
+</html>

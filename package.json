@@ -1,0 +1,22 @@
+{
+  "name": "derli_project_v1",
+  "version": "1.0.0",
+  "description": "Trabalho individual",
+  "main": "index.js",
+  "scripts": {
+    "start": " nodemon node app.js",
+    "dev": "nodemon --exec node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {},
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mssql": "^7.2.1",
+    "mysql2": "^2.3.3",
+    "nodemon": "^2.0.15",
+    "path": "^0.12.7"
+  }
+}

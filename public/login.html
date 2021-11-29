@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./css/estilizacao.css">
+    <title>login</title>
+</head>
+<body>
+<header class="cabecario">
+		
+        <a href="#">Logo</a>
+
+        <nav class="nax-bar">
+            <ul class="itens">
+                <li><a href="#">Sobre</a></li>
+                <li><a href="#">login/cadastro</a></li>
+            </ul>
+        </nav>
+    
+</header>
+
+<section class="corpo">
+    <div class="form">
+        <div id="login">
+            <h4>ID usuario:</h4>
+            <input type="text" id="ipt_logar_id">
+            <h4>Senha:</h4>
+            <input type="text" id="ipt_logar_senha">
+            
+                <button onclick="fun_entrar()">Entrar</button>
+            
+        </div>
+    </div>
+</section>
+
+</body>
+<script>
+    function fun_entrar() {
+
+        var usuarioLogar = ipt_logar_id.value;
+        var senhaLogar = ipt_logar_senha.value;
+
+        console.log("FORM LOGIN: ", usuarioLogar);
+        console.log("FORM SENHA: ", senhaLogar);
+
+        // TODO: VERIFICAR AS VALIDAÇÕES QUE ELES ESTÃO APRENDENDO EM ALGORITMOS 
+        if (usuarioLogar == "" || senhaLogar == "") {
+            window.alert("Preencha todos os campos para prosseguir!");
+            
+            return false;
+        }
+
+        /*if (usuarioLogar.indexOf("@") == -1 || usuarioLogar.indexOf(".com") == -1) {
+            window.alert("Ops, e-mail inválido! Verifique e tente novamente.");
+            
+            return false;
+        }*/
+
+        fetch("/usuarios/autenticar", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                usuarioServer: usuarioLogar,
+                senhaServer: senhaLogar
+            })
+        }).then(function (resposta) {
+            console.log("ESTOU NO THEN DO entrar()!")
+
+            if (resposta.ok) {
+                console.log(resposta);
+
+                resposta.json().then(json => {
+                    console.log(json);
+                    console.log(JSON.stringify(json));
+
+                    sessionStorage.NICK_USUARIO = json.usuario;
+                    sessionStorage.NOME_USUARIO = json.email;
+                    sessionStorage.ID_USUARIO = json.id;
+
+                    setTimeout(function () {
+                        window.location = "jogar.html";
+                    }, 1000); // apenas para exibir o loading
+
+                });
+
+            } else {
+                alert("Usuário não cadastrado");
+                console.log("Houve um erro ao tentar realizar o login!");
+                ipt_logar_id.value = "";
+                ipt_logar_senha.value = "";
+                resposta.text().then(texto => {
+                    console.error(texto);
+                });
+            }
+
+        }).catch(function (erro) {
+            console.log(erro);
+        })
+
+        return false;
+    }
+
+    function submeter(){
+
+
+    }
+</script>
+</html>
